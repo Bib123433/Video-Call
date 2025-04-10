@@ -1,0 +1,95 @@
+body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: #121212;
+    color: #ffffff;
+}
+ /* Agar layout full tinggi, dan sidebar & konten bisa di-scroll terpisah */
+ .container-fluid, .row-flex {
+    height: 100vh;
+  }
+
+  .sidebar {
+    background-color: #000000;
+    overflow-y: auto; 
+  }
+  .sidebar .nav-link {
+    color: #ffffff;
+    font-weight: 500;
+  }
+  .sidebar .nav-link.active {
+    background-color: #1f1f1f;
+    border-radius: 8px;
+  }
+
+  /* Bagian konten utama */
+  .main-content {
+    overflow-y: auto; 
+  }
+
+  /* Top bar (akun personal) */
+  .top-bar {
+    border-bottom: 1px solid #2a2a2a;
+  }
+
+  /* Container isi feed */
+  .content-wrapper {
+    padding: 1rem;
+  }
+
+  /* Card untuk create post */
+  .create-post-card {
+    background-color: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    border-radius: 8px;
+  }
+  .create-post-card .avatar img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  /* Card postingan */
+  .post-card {
+    background-color: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+  .post-card .post-author {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+  .post-card .post-text {
+    margin-bottom: 0.5rem;
+    line-height: 1.4;
+  }
+  .post-image {
+    max-width: 100%;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+  }
+  .post-footer {
+    font-size: 0.875rem;
+    color: #aaaaaa;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  /* Avatar bulat sederhana */
+  .avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    margin-right: 0.5rem;
+    flex-shrink: 0;
+    background-color: #6f42c1; /* contoh warna */
+  }

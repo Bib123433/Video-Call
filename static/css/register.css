@@ -1,0 +1,56 @@
+body {
+    background-color: #e6e0f8;
+    background: linear-gradient(135deg, #FF00FF, #800080, #4B0082);
+    min-height: 110vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.register-container {
+    background: #fff;
+    border-radius: 15px;
+    overflow: hidden;
+    display: flex;
+    width: 850px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+.register-image {
+    background: linear-gradient(130deg, #ef15cb, #4f87e8);
+    width: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.register-image img {
+    width: 80%;
+    border-radius: 10px;
+}
+.register-form {
+    padding: 50px;
+    width: 50%;
+}
+.register-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+.register-header h1 {
+    font-weight: bold;
+}
+.register-header p {
+    color: #777;
+}
+.btn-primary {
+    background-color: #e91e63;
+    border: none;
+}
+.btn-primary:hover {
+    background-color: #c2185b;
+}
+.text-muted a {
+    font-weight: bold;
+    text-decoration: none;
+    color: #e91e63;
+}
+.text-muted a:hover {
+    text-decoration: underline;
+}

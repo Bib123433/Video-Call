@@ -1,0 +1,67 @@
+.post-box {
+    max-width: 600px;
+    margin: 20px auto;
+    background: #1e1e1e;
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid #444;
+}
+.post-box textarea {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 16px;
+    resize: none;
+    outline: none;
+}
+.post-box .icons {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+.post-box .icons i {
+    cursor: pointer;
+    color: #1DA1F2;
+}
+.post-box .post-btn {
+    float: right;
+    background-color: gray;
+    color: white;
+    border: none;
+    padding: 7px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+}
+.post {
+    max-width: 600px;
+    margin: 20px auto;
+    background: #1e1e1e;
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid #444;
+}
+.post .profile {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.post .profile img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+.post .content img, .post .content video {
+    width: 100%;
+    border-radius: 10px;
+    margin-top: 10px;
+}
+.icons {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 10px;
+}
+.icons span {
+    cursor: pointer;
+}

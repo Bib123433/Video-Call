@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User-to-User Call</title>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js" defer></script>
+    <script src="{{ url_for('static', filename='script.js') }}" defer></script>
+    <style>
+        video {
+            width: 300px;
+            height: 220px;
+            margin: 10px;
+            border: 2px solid #000;
+        }
+    </style>
+</head>
+<body>
+    <h2>Login</h2>
+    <input id="username" placeholder="Your Username">
+    <button onclick="register()">Register</button>
+
+    <h3>Video Call Someone</h3>
+    <input id="targetUser" placeholder="Target Username">
+    <button id="callBtn">Start Video Call</button>
+
+    <div>
+        <video id="localVideo" autoplay muted></video>
+        <video id="remoteVideo" autoplay></video>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const callBtn = document.getElementById("callBtn");
+            if (callBtn) {
+                callBtn.addEventListener("click", () => {
+                    startCall(); // fungsi ada di script.js
+                });
+            }
+        });
+    </script>
+</body>
+</html>
