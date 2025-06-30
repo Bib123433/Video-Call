@@ -47,12 +47,7 @@ def handle_call(data):
         emit('incoming_call', {'from': from_user, 'offer': offer}, room=users[to_user])
 
 
-# WebRTC Offer/Answer
-@socketio.on('offer')
-def handle_offer(data):
-    to_user = data['to']
-    offer = data['offer']
-    emit('offer', {'offer': offer}, room=users[to_user])
+
 
 @socketio.on('answer')
 def handle_answer(data):

@@ -1,41 +1,293 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>User-to-User Call</title>
-    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js" defer></script>
-    <script src="{{ url_for('static', filename='script.js') }}" defer></script>
-    <style>
-        video {
-            width: 300px;
-            height: 220px;
-            margin: 10px;
-            border: 2px solid #000;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Video Call App</title>
+
+  <!-- Bootstrap CSS & FontAwesome -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    rel="stylesheet"
+  />
+
+  <style>
+    body { font-family: sans-serif; }
+    /* === Incoming Call Overlay & Box === */
+    .call-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 1040;
+      display: none;
+    }
+    #callOverlay {
+  display: none;
+  /* Sudah ada background rgba di situ */
+}
+
+#callOverlay.hidden {
+  display: none !important;
+}
+
+#callOverlay.visible {
+  display: flex !important;
+}
+
+   
+
+   .video-thumb {
+  position: absolute;
+  bottom: 80px;
+  right: 20px;
+  width: 144px;
+  height: 96px;
+  overflow: hidden;
+  border-radius: 10px;
+  background-color: black;
+}
+
+.control-btn {
+  width: 45px;
+  height: 45px;
+  background-color: rgba(55, 65, 81, 0.6);
+  color: #ccc;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.control-btn:hover {
+  color: white;
+}
+
+.end-call {
+  background-color: #dc3545;
+  color: white;
+}
+
+.end-call:hover {
+  background-color: #b02a37;
+}
+
+.notification-box {
+  background-color: rgba(55, 65, 81, 0.9);
+  border-radius: 10px;
+  padding: 10px 16px;
+  max-width: 300px;
+  font-size: 13px;
+}
+
+.notification-box i {
+  background-color: #374151;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  text-align: center;
+  line-height: 32px;
+  font-size: 14px;
+  color: white;
+}
+
+/* Responsive video thumb for smaller devices */
+@media (max-width: 576px) {
+  .video-thumb {
+    width: 100px;
+    height: 70px;
+    bottom: 70px;
+    right: 10px;
+  }
+
+  .control-btn {
+    width: 40px;
+    height: 40px;
+  }
+}
+#callControls {
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 10px 20px;
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 30px;
+  z-index: 10;
+}
+
+@media (max-width: 576px) {
+  #callControls {
+    gap: 8px;
+  }
+
+  .control-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 14px;
+  }
+}
+
+ 
+  </style>
 </head>
 <body>
-    <h2>Login</h2>
-    <input id="username" placeholder="Your Username">
-    <button onclick="register()">Register</button>
 
-    <h3>Video Call Someone</h3>
-    <input id="targetUser" placeholder="Target Username">
-    <button id="callBtn">Start Video Call</button>
-
-    <div>
-        <video id="localVideo" autoplay muted></video>
-        <video id="remoteVideo" autoplay></video>
+  <!-- Default UI -->
+  <div id="defaultUI" class="container mt-4">
+    <h4>Login</h4>
+    <div class="mb-2">
+      <input id="username" type="text" placeholder="Your Username"
+             class="form-control d-inline-block w-auto">
+      <button class="btn btn-primary btn-sm" onclick="register()">Register</button>
     </div>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const callBtn = document.getElementById("callBtn");
-            if (callBtn) {
-                callBtn.addEventListener("click", () => {
-                    startCall(); // fungsi ada di script.js
-                });
-            }
-        });
-    </script>
+    <h5 class="mt-4">Video Call Someone</h5>
+    <div class="mb-2">
+      <input id="targetUser" type="text" placeholder="Target Username"
+             class="form-control d-inline-block w-auto">
+      <button id="callBtn" onclick="startCall()"
+              class="btn btn-success btn-sm">Start Video Call</button>
+    </div>
+
+   
+  </div>
+
+  <div class=" top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center"  id="callOverlay">
+  <div id="incomingCallBox"class="bg-white rounded shadow p-4 position-relative" style="width: 300px; display:none;">
+    
+    <!-- Tombol close -->
+    <button type="button" class="btn-close position-absolute top-0 end-0 m-3" aria-label="Close" onclick="declineIncoming()"></button>
+    
+    <!-- Header -->
+    <h6 class="text-center mb-3">Telepon Masuk</h6>
+
+    <!-- Avatar -->
+    <div class="d-flex justify-content-center mb-3">
+      <img src="https://i.pinimg.com/736x/7d/6e/89/7d6e89ec606a8ad20b1f06cbff111c44.jpg" class="rounded-circle" width="64" height="64" alt="Avatar">
+    </div>
+
+    <!-- Nama Penelepon -->
+    <h5 class="fw-bold text-center mb-1" id="callerNameIncoming"><br>Menelpon Anda</h5>
+
+    <!-- Deskripsi -->
+    <p class="text-center text-muted mb-4">Telepon akan dimulai setelah Anda menerimanya</p>
+
+    <!-- Tombol -->
+    <div class="d-flex justify-content-center gap-4">
+      <div class="text-center">
+        <button class="btn btn-danger rounded-circle d-flex justify-content-center align-items-center" style="width: 50px; height: 50px;" onclick="declineIncoming()">
+          <i class="fas fa-times text-white"></i>
+        </button>
+        <div class="small mt-1">Tolak</div>
+      </div>
+      <div class="text-center">
+        <button class="btn btn-success rounded-circle d-flex justify-content-center align-items-center" style="width: 50px; height: 50px;" onclick="acceptIncoming()">
+          <i class="fas fa-video text-white"></i>
+        </button>
+        <div class="small mt-1">Terima</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+
+  <!-- Call Modal -->
+<div class="modal fade" id="callScreen" tabindex="-1" aria-labelledby="callScreenLabel" aria-hidden="true">
+  <div class="modal-dialog modal-fullscreen">
+    <div class="modal-content bg-black text-white">
+      <div class="modal-body d-flex flex-column justify-content-center align-items-center position-relative" style="min-height: 100vh; padding: 16px;">
+
+        <!-- Notification Top Right -->
+        <div class="position-absolute top-0 end-0 p-3">
+          <div class="notification-box mb-2 d-flex align-items-center">
+            <i class="fas fa-microphone me-3"></i>
+            <div>
+              <p class="mb-0 fw-semibold">Mikrofon terhubung: Microphone</p>
+              <p class="mb-0">(Realtek(R) Audio)</p>
+            </div>
+          </div>
+          <div class="notification-box d-flex align-items-center">
+            <i class="fas fa-volume-up me-3"></i>
+            <div>
+              <p class="mb-0 fw-semibold">Speaker terhubung: Headphones</p>
+              <p class="mb-0">(JQVITEK Classic EP26)</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="text-center mb-5 w-100">
+        <!-- Avatar Placeholder -->
+        <div id="callingStatus" class="d-flex flex-column justify-content-center align-items-center" style="height: 70vh;">
+          <img src="https://www.w3schools.com/howto/img_avatar.png" class="rounded-circle mb-3" width="120" height="120" />
+          <h4 id="callerNameStatus" class="mb-0">Memanggil...</h4>
+        </div>
+
+        <!-- Center Profile / Video -->
+        <div class="text-center mb-5 w-100">
+          <video id="remoteVideo" autoplay class="w-100 h-auto" style="max-height: 70vh; border-radius: 8px;"></video>
+        </div>
+
+        <!-- Bottom Controls -->
+        <div id="callControls" class="position-absolute bottom-0 mb-4 d-flex gap-3 d-none">
+          <button class="control-btn" aria-label="Screen share"><i class="fas fa-expand-arrows-alt"></i></button>
+          <button class="control-btn" aria-label="Add participant"><i class="fas fa-user-plus"></i></button>
+          <button class="control-btn" aria-label="Turn off camera"   onclick="stopCamera()"><i class="fas fa-video-slash" id="cameraToggleBtn"></i></button>
+          <button class="control-btn" aria-label="Mute microphone" onclick="Muted()"><i id="audioToggleBtn" class="fas fa-microphone-slash"></i></button>
+          <button class="control-btn end-call" onclick="endCall()" aria-label="End call"><i class="fas fa-phone"></i></button>
+        </div>
+
+        <!-- Small Video -->
+        <div class="video-thumb">
+          <video id="localVideo" autoplay class="w-100 h-100"></video>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  <!-- Socket.io & Script.js -->
+  <!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Font Awesome -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+
+<!-- Socket.io -->
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js" defer></script>
+
+<!-- Bootstrap JS Bundle (wajib) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- JS Kamu -->
+<script src="{{ url_for('static', filename='script.js') }}" defer></script>
+
+  <script>
+    // ==== Handle Incoming Call UI ====
+    function showIncoming(fromUser) {
+      document.getElementById('callerName').textContent = fromUser + ' menelpon Anda';
+      document.getElementById('callOverlay').style.display = 'block';
+      document.getElementById('incomingCallBox').style.display = 'block';
+    }
+    function declineIncoming() {
+      document.getElementById('callOverlay').style.display = 'none';
+      document.getElementById('incomingCallBox').style.display = 'none';
+    }
+    function acceptIncoming() {
+      declineIncoming();
+      // trigger JS flow yang sudah ada di script.js untuk menjawab
+      confirmAccept(); // contoh panggil fungsi confirm di script.js
+    }
+  </script>
+  <!-- FontAwesome JS -->
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"
+    defer
+  ></script>
 </body>
 </html>
